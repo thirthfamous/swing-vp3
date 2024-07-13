@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,47 +26,31 @@ public class MahasiswaFrame {
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.addColumn("ID");
         tableModel.addColumn("Nama");
-        tableModel.addColumn("NIM");
 
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/mahasiswaku?" +
-                    "user=root&password=farhan123");
-            String query = "SELECT * FROM mahasiswa";
-            PreparedStatement preparedStatement = conn.prepareStatement(query);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                String nama = rs.getString(2);
-                String nim = rs.getString(3);
-
-                tableModel.addRow(new Object[] { id, nama, nim });
-            }
-
-        } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
-        }
+        tableModel.addRow(new Object[] { 1, "Bulbasaur" });
+        tableModel.addRow(new Object[] { 2, "Squirtle" });
+        tableModel.addRow(new Object[] { 3, "Charmander" });
 
         JTable table = new JTable(tableModel);
+        JLabel pokemonLabel = new JLabel("");
         JScrollPane pane = new JScrollPane(table);
 
-        JButton button = new JButton("Create Mahasiswa");
-
-        button.addActionListener(new ActionListener() {
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                new CreateMahasiswaFrame();
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = table.rowAtPoint(evt.getPoint());
+                // int col = table.columnAtPoint(evt.getPoint());
+                if (row >= 0) {
+                    pokemonLabel.setText(table.getValueAt(row, 1).toString());
+                }   
             }
         });
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(true);
-        panel.add(button);
         panel.add(pane);
+        panel.add(pokemonLabel);
 
         jFrame.getContentPane().add(BorderLayout.CENTER, panel);
         jFrame.pack();
